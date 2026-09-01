@@ -102,11 +102,8 @@ The BaSyx AAS Web UI includes a growing list of plugins for various IDTA Submode
 
 If you are interested in developing your own plugin for the BaSyx AAS Web UI, please refer to the [Plugin Development Guide](../../../../developer_documentation/basyx_web_ui/creating_submodel_plugins.md).
 
-## Detailed Plugin Documentation
-
-For detailed information, screenshots, and usage examples, see the individual plugin pages:
-
 ```{toctree}
+:hidden:
 :maxdepth: 1
 
 plugins/digital_nameplate

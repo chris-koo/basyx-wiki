@@ -25,6 +25,7 @@ name: web_ui
 * [Corporate Design](./features/corporate_design.md)
 * [Mobile Support](./features/mobile_support.md)
 * [Plugins](./features/plugin_mechanism.md)
+* [Modules](./features/modules_overview.md)
 * [AAS Editor](./features/aas_editor.md)
 * [AAS Routing](./features/routing.md)
 * [Application Theme](./features/theme.md)
@@ -41,6 +42,7 @@ features/supply_chain_security
 features/corporate_design
 features/mobile_support
 features/plugin_mechanism
+features/modules_overview
 features/aas_editor
 features/routing
 features/theme
