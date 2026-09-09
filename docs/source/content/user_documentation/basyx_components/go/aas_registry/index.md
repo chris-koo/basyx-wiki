@@ -1,6 +1,8 @@
 # AAS Registry
 
 ![GitHub](https://img.shields.io/github/license/eclipse-basyx/basyx-go-components)
+![Metamodel](https://img.shields.io/badge/Metamodel-v3.2-yellow)
+![API](https://img.shields.io/badge/API-v3.2-yellow)
 
 The BaSyx AAS Registry implements the Asset Administration Shell Registry Service. It stores AAS Descriptors and the Submodel Descriptors associated with a registered AAS so that clients can discover where AASs and their submodels are available.
 
@@ -30,6 +32,8 @@ A typical deployment uses both components:
 4. The client follows the advertised endpoint to interact with the AAS in the Repository.
 
 The Registry and Repository do not have to run in the same process or at the same network location. This separation allows one Registry to advertise AASs provided by multiple services or organizations.
+
+Alternatively, the [BaSyx AAS Environment](C:\Users\koort\Documents\CodeRepositories\basyx-wiki\docs\source\content\user_documentation\basyx_components\go\aas_environment\index.md) combines the AAS Registry and AAS Repository capabilities in a single component.
 
 ## Main Capabilities
 
@@ -77,14 +81,6 @@ The Registry uses PostgreSQL and expects the shared BaSyx database schema to be 
 ## Configuration
 
 See [General Configuration](../common/configuration) for the configuration parameters supported by BaSyx Go components.
-
-## Limitations and Operational Notes
-
-- The Registry stores descriptors, not AAS or Submodel payloads.
-- Advertised endpoints should be reachable from the clients that consume the descriptor; container-internal addresses are often unsuitable for external clients.
-- Cursor values are implementation-managed and should not be parsed or constructed by clients.
-- A configured PostgreSQL reader is eventually consistent, so a descriptor mutation may not be visible immediately through a reader-routed request.
-- Exact API behavior, including status codes and validation constraints, is defined by the served OpenAPI document.
 
 ## API Documentation
 
