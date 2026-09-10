@@ -4,7 +4,7 @@
 ![Metamodel](https://img.shields.io/badge/Metamodel-v3.2-yellow)
 ![API](https://img.shields.io/badge/API-v3.2-yellow)
 
-The BaSyx AAS Registry implements the Asset Administration Shell Registry Service. It stores AAS Descriptors and the Submodel Descriptors associated with a registered AAS so that clients can discover where AASs and their submodels are available.
+The BaSyx AAS Registry implements the Asset Administration Shell Registry Service. It stores AAS Descriptors and the Submodel Descriptors associated with a registered AAS so that clients can discover where AASs and their Submodels are available.
 
 The Registry manages descriptive and routing metadata. It does not store or serve the AAS or Submodel content itself.
 
@@ -18,7 +18,7 @@ An AAS Descriptor identifies an AAS and describes how clients can reach it. Depe
 - Submodel Descriptors associated with that AAS.
 
 A complete list of AAS Descriptor attributes is found in the [specification of the AAS](https://industrialdigitaltwin.io/aas-specifications/IDTA-01002/v3.2/specification/interfaces-payload.html#_assetadministrationshelldescriptor). <br>
-A Submodel Descriptor plays the same role for a submodel: it identifies the submodel and advertises endpoints and other discovery metadata. In the AAS Registry, Submodel Descriptors are scoped to their parent AAS Descriptor.
+A Submodel Descriptor plays the same role for a Submodel: It identifies the Submodel and advertises endpoints and other discovery metadata. In the AAS Registry, Submodel Descriptors are scoped to their parent AAS Descriptor.
 
 ## Registry or Repository?
 
@@ -33,7 +33,9 @@ A typical deployment uses both components:
 
 The Registry and Repository do not have to run in the same process or at the same network location. This separation allows one Registry to advertise AASs provided by multiple services or organizations.
 
-Alternatively, the [BaSyx AAS Environment](C:\Users\koort\Documents\CodeRepositories\basyx-wiki\docs\source\content\user_documentation\basyx_components\go\aas_environment\index.md) combines the AAS Registry and AAS Repository capabilities in a single component.
+Alternatively, the BaSyx AAS Environment combines the AAS Registry and AAS Repository capabilities in a single component.
+
+See [Using the AAS Registry](usage) for a walkthrough from descriptor registration to lookup, update, and deletion.
 
 ## Main Capabilities
 
@@ -59,20 +61,26 @@ Submodel Descriptors in this component belong to an AAS Descriptor. Clients ther
 
 Identifiers used in request paths must be encoded as UTF-8 Base64 URL values. Encode the original identifier with the URL-safe Base64 alphabet before placing it in a path. Do not send an arbitrary AAS or Submodel identifier directly as a path segment, because identifiers can contain characters that have a special meaning in URLs.
 
-When an operation also has a request body, the body continues to contain the original, unencoded identifier. Encoding is required for the path parameter only. Consult Swagger for the encoding requirement of each operation.
+When an operation also has a request body, the body continues to contain the original, unencoded identifier. Some query parameters also require encoding: `assetType` is a Base64URL-encoded string, and each `assetIds` value is a Base64URL-encoded JSON `SpecificAssetId`.
 
 ### Pagination and Filters
 
-Collection requests use cursor-based pagination. Treat the returned cursor as an opaque value and pass it unchanged when requesting the next page. The `limit` controls the requested page size; it is not an offset.
+Collection requests use cursor-based pagination. Treat the returned cursor as an opaque value and pass it unchanged when requesting the next page. The `limit` controls the requested page size. It is not an offset.
 
 Asset-related filters help clients narrow discovery results before contacting a Repository. For example:
 
 - `assetKind` limits results by the kind of asset represented by the AAS;
 - `assetType` selects descriptors whose asset information uses a particular asset-type value;
 - asset-identifier filters locate descriptors associated with known asset identifiers;
-- creation and update filters support synchronization workflows that only need descriptors changed after a given time.
+- `createdFrom` and `updatedFrom` select descriptors by their persisted administrative timestamps.
 
-Filter syntax, allowed values, and combination rules are part of the API contract and are documented in Swagger.
+Timestamp filters use `administration.createdAt` and `administration.updatedAt` from the descriptor payload. The Registry does not generate or update these values on writes. Instead, the registering application must maintain them. The lower bounds are inclusive. When both timestamp filters are supplied, a descriptor matches if either bound is satisfied.
+
+### Updates and Bulk Operations
+
+PUT creates a descriptor when its identifier does not exist and replaces it when it does. The body identifier must match the decoded path identifier. Replacing an AAS Descriptor also replaces its nested Submodel Descriptors. Retain those entries in the submitted body when they should remain registered.
+
+Bulk creation, update, and deletion are asynchronous and atomic: if a descriptor operation fails, the complete transaction is rolled back. Submit a bulk request, poll its status, and retrieve the completed result once. Retrieving the completed result consumes the handle. See [Bulk Operations](usage#bulk-operations) for the response sequence, retention, and failure handling.
 
 ### Database Schema
 
@@ -102,6 +110,7 @@ When `server.contextPath` is configured, both locations are served below that co
 ## Related Documentation
 
 - [Setting Up the AAS Registry](setup)
+- [Using the AAS Registry](usage)
 - [General Configuration](../common/configuration)
 - [Common / Shared Features](../common/shared_features)
 - [Swagger UI Docs](../common/swagger)
@@ -111,4 +120,5 @@ When `server.contextPath` is configured, both locations are served below that co
 :maxdepth: 1
 
 setup
+usage
 ```

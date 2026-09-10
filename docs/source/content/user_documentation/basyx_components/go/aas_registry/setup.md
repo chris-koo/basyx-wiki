@@ -29,7 +29,7 @@ services:
 
   basyx_configuration:
     container_name: basyx_configuration
-    image: eclipsebasyx/basyxconfigurationservice-go:SNAPSHOT
+    image: eclipsebasyx/basyxconfigurationservice-go:1.0.11
     pull_policy: always
     environment:
       - POSTGRES_HOST=postgres
@@ -46,7 +46,7 @@ services:
         condition: service_healthy
 
   aas_registry:
-    image: eclipsebasyx/aasregistry-go:SNAPSHOT
+    image: eclipsebasyx/aasregistry-go:1.0.11
     pull_policy: always
     container_name: aas_registry
     environment:
@@ -63,6 +63,27 @@ services:
         condition: service_completed_successfully
 ```
 *docker-compose.yml including PostgreSQL 18, the BaSyx Go Configuration Service, and BaSyx Go AAS Registry*
+
+Use the same release version for the BaSyx Configuration and the BaSyx AAS Registry service, here 1.0.11.
+
+### Start and Check the Registry
+
+The services can be started by running the following command in the directory of the compose file:
+
+```bash
+docker compose up -d
+```
+
+The Configuration Service is a one-time initialization/migration job. An exit code of `0` is expected; the Registry starts only after that job completes successfully.
+
+Once the Registry is ready, check its health:
+
+```bash
+curl -i http://localhost:8082/health
+```
+Expect HTTP `200` with `{"status":"UP"}`. Open [Swagger UI](http://localhost:8082/swagger) to explore the API. To help you with the first steps using the registry, follow [Using the AAS Registry](usage) to register your first descriptor.
+
+The Compose example explicitly selects port `8082`. When using a context path, include it in health, Swagger, and API URLs; for example, `SERVER_CONTEXTPATH=/api/v3` makes the health URL `http://localhost:8082/api/v3/health`.
 
 ### Access Rules and Trustlist Files (Secured Setup)
 
